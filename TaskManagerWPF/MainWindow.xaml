@@ -1,0 +1,40 @@
+﻿<Window x:Class="TaskManagerWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskManagerWPF.ConvertUtil"
+        mc:Ignorable="d"
+        x:Name="MainWnd"
+        Title="タスク管理" Height="500" Width="600" WindowStartupLocation="CenterScreen" Closing="MainWnd_Closing" Loaded="MainWnd_Loaded" Icon="Resources/Icon/AppIcon.ico">
+    <Window.Resources>
+        <!-- タスク完了状態の bool 型を対応するテキストに変換するクラスをリソースとして登録する。 -->
+        <local:TaskStateConverter x:Key="TaskStateConverter" />
+        <local:TaskDeadLineConverter x:Key="TaskDeadLineConverter" />
+    </Window.Resources>
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <Menu>
+                <MenuItem Header="ファイル (_F)">
+                    <MenuItem x:Name="MenuExit" Header="終了 (_X)" Click="MenuExit_Click"/>
+                </MenuItem>
+                <MenuItem Header="ヘルプ (_H)">
+                    <MenuItem x:Name="MenuVersionInfo" Header="バージョン情報 (_A)" Click="MenuVersionInfo_Click"/>
+                </MenuItem>
+            </Menu>
+        </StackPanel>
+        <Label x:Name="LbNotice" Content="タスク内容を編集するには一覧の該当するレコードをダブルクリックして下さい。" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="BtnAddTask" Content="タスクを追加" HorizontalAlignment="Left" Margin="10,61,0,0" VerticalAlignment="Top" Width="80" Height="50" Click="BtnAddTask_Click"/>
+        <Button x:Name="BtnDeleteTaskk" Content="タスクを削除" HorizontalAlignment="Left" Margin="95,61,0,0" VerticalAlignment="Top" Width="80" Height="50" Click="BtnDeleteTaskk_Click"/>
+        <DataGrid x:Name="DgTask" Margin="10,116,10,10" HeadersVisibility="Column" AutoGenerateColumns="False" SelectionUnit="FullRow" SelectionMode="Single" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" MouseDoubleClick="DgTask_MouseDoubleClick">
+            <DataGrid.Columns>
+                <!-- タスク完了状態の bool 型を対応するテキストに変換するクラスでバインドされた bool 型の値に基づく該当するテキストへの変換を行う。 -->
+                <DataGridTextColumn Header="完了状態" Width="80" Binding="{Binding IsTaskComplete, Converter={StaticResource TaskStateConverter}}" />
+                <DataGridTextColumn Header="タスク名" Width="120" Binding="{Binding TaskName}" />
+                <DataGridTextColumn Header="タスク進捗率" Width="80" Binding="{Binding TaskProgress}" />
+                <DataGridTextColumn Header="タスク期限日" Width="100" Binding="{Binding TaskDeadline, StringFormat=yyyy/MM/dd, Converter={StaticResource TaskDeadLineConverter}}" />
+                <DataGridTextColumn Header="備考" Width="*" Binding="{Binding TaskRemarks}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
